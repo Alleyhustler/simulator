@@ -3,236 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MemeTrader Simulator</title>
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>SOL MemeTrader Simulator</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Megrim&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <div id="root"></div>
-
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-    const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
-
-    const MemeTrader = () => {
-      const [coinData, setCoinData] = useState([]);
-      const [currentPrice, setCurrentPrice] = useState(0);
-      const [wallet, setWallet] = useState({
-        cash: 1000,
-        coinHolding: 0,
-        invested: 0,
-        soldValue: 0,
-        avgBuyPrice: 0,
-      });
-      const [buyPercent, setBuyPercent] = useState(10);
-      const [sellPercent, setSellPercent] = useState(10);
-      const [isPaused, setIsPaused] = useState(false);
-      const [tradingHistory, setTradingHistory] = useState([]);
-
-      useEffect(() => {
-        let price = Math.random() * 0.0009 + 0.0001;
-        const initialData = [];
-        for (let i = 0; i < 100; i++) {
-          const changePercent = (Math.random() - 0.48) * 3;
-          price = price * (1 + changePercent / 100);
-          if (price < 0.00001) price = 0.00001;
-          initialData.push({ time: i, price: price });
-        }
-        setCoinData(initialData);
-        setCurrentPrice(initialData[initialData.length - 1].price);
-      }, []);
-
-      useEffect(() => {
-        if (isPaused) return;
-        const interval = setInterval(() => {
-          if (coinData.length === 0) return;
-          let lastPrice = coinData[coinData.length - 1].price;
-          const random = Math.random();
-          let changePercent;
-          if (random > 0.995) {
-            changePercent = (Math.random() * 10) + 5;
-          } else if (random > 0.99) {
-            changePercent = -((Math.random() * 10) + 5);
-          } else {
-            changePercent = (Math.random() - 0.48) * 3;
-          }
-          const newPrice = lastPrice * (1 + changePercent / 100);
-          const finalPrice = Math.max(newPrice, 0.00001);
-          const newData = [
-            ...coinData.slice(1),
-            { time: coinData[coinData.length - 1].time + 1, price: finalPrice }
-          ];
-          setCoinData(newData);
-          setCurrentPrice(finalPrice);
-        }, 1000);
-        return () => clearInterval(interval);
-      }, [coinData, isPaused]);
-
-      const pnl = wallet.coinHolding * currentPrice - wallet.invested + wallet.soldValue;
-      const pnlPercent = wallet.invested > 0 ? (pnl / wallet.invested) * 100 : 0;
-      const remainingValue = wallet.coinHolding * currentPrice;
-
-      const handleBuy = () => {
-        const amount = (wallet.cash * buyPercent) / 100;
-        if (amount <= 0 || wallet.cash < amount) return;
-        const coinsBought = amount / currentPrice;
-        const newCoinHolding = wallet.coinHolding + coinsBought;
-        const newInvested = wallet.invested + amount;
-        const newAvgBuyPrice = newInvested / newCoinHolding;
-        setWallet({
-          ...wallet,
-          cash: wallet.cash - amount,
-          coinHolding: newCoinHolding,
-          invested: newInvested,
-          avgBuyPrice: newAvgBuyPrice
-        });
-        setTradingHistory([
-          ...tradingHistory,
-          {
-            type: 'BUY',
-            amount: coinsBought,
-            price: currentPrice,
-            value: amount,
-            timestamp: new Date().toLocaleTimeString()
-          }
-        ]);
-      };
-
-      const handleSell = () => {
-        const amountToSell = (wallet.coinHolding * sellPercent) / 100;
-        if (amountToSell <= 0) return;
-        const valueReceived = amountToSell * currentPrice;
-        const percentOfHolding = amountToSell / wallet.coinHolding;
-        const investmentSold = wallet.invested * percentOfHolding;
-        setWallet({
-          ...wallet,
-          cash: wallet.cash + valueReceived,
-          coinHolding: wallet.coinHolding - amountToSell,
-          invested: wallet.invested - investmentSold,
-          soldValue: wallet.soldValue + valueReceived
-        });
-        setTradingHistory([
-          ...tradingHistory,
-          {
-            type: 'SELL',
-            amount: amountToSell,
-            price: currentPrice,
-            value: valueReceived,
-            timestamp: new Date().toLocaleTimeString()
-          }
-        ]);
-      };
-
-      const formatPrice = (price) => {
-        if (price < 0.000001) return price.toExponential(6);
-        if (price < 0.001) return price.toFixed(8);
-        if (price < 1) return price.toFixed(6);
-        return price.toFixed(2);
-      };
-
-      return (
-        <div className="flex flex-col p-4 gap-4 w-full max-w-4xl mx-auto bg-gray-50 rounded-lg">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800">MemeTrader Simulator</h1>
-            <h2 className="text-xl font-semibold text-blue-600">DOGE/USD: ${formatPrice(currentPrice)}</h2>
+  <div class="container">
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo">
+          <img src="Untitled design (12) (1) (1) (1).png" alt="DOGE Logo">
+        </div>
+        <div class="token-info">
+          <div class="contract-address">
+            <span>Contract Address:</span>
+            <code>HERE...</code>
+            <button class="copy-button" onclick="copyToClipboard('DogE5a1T2PKh4j2WiE8ZM9yWRM3kZKBTzPKzM')"><i class="fas fa-copy"></i></button>
           </div>
-          <div className="h-64 bg-white p-2 rounded-lg shadow">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={coinData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" tick={false} />
-                <YAxis domain={['auto', 'auto']} scale="log" tick={false} />
-                <Tooltip formatter={(value) => ['$' + formatPrice(value), 'Price']} labelFormatter={() => 'Price'} />
-                <Line type="monotone" dataKey="price" stroke="#3b82f6" dot={false} strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex flex-col md:flex-row gap-4 justify-between">
-            <div className="flex-1 p-4 bg-white rounded-lg shadow">
-              <h3 className="text-lg font-bold mb-2">Portfolio</h3>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-gray-600">Cash:</div>
-                <div className="font-medium">${wallet.cash.toFixed(2)}</div>
-                <div className="text-gray-600">Coins:</div>
-                <div className="font-medium">{wallet.coinHolding.toFixed(2)}</div>
-                <div className="text-gray-600">Invested:</div>
-                <div className="font-medium">${wallet.invested.toFixed(2)}</div>
-                <div className="text-gray-600">Remaining:</div>
-                <div className="font-medium">${remainingValue.toFixed(2)}</div>
-                <div className="text-gray-600">Sold:</div>
-                <div className="font-medium">${wallet.soldValue.toFixed(2)}</div>
-                <div className="text-gray-600">Change in P&L:</div>
-                <div className={`font-medium ${pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  ${pnl.toFixed(2)} ({pnlPercent.toFixed(2)}%)
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 p-4 bg-white rounded-lg shadow">
-              <h3 className="text-lg font-bold mb-2">Trading</h3>
-              <div className="mb-4">
-                <label className="block text-gray-600 mb-1">Buy (% of cash)</label>
-                <div className="flex items-center gap-2">
-                  <input type="range" min="1" max="100" value={buyPercent} onChange={(e) => setBuyPercent(parseInt(e.target.value))} className="flex-1" />
-                  <span className="w-10 text-right">{buyPercent}%</span>
-                </div>
-                <button onClick={handleBuy} className="mt-2 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-                  Buy (${((wallet.cash * buyPercent) / 100).toFixed(2)})
-                </button>
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-600 mb-1">Sell (% of coins)</label>
-                <div className="flex items-center gap-2">
-                  <input type="range" min="1" max="100" value={sellPercent} onChange={(e) => setSellPercent(parseInt(e.target.value))} className="flex-1" />
-                  <span className="w-10 text-right">{sellPercent}%</span>
-                </div>
-                <button onClick={handleSell} disabled={wallet.coinHolding <= 0} className={`mt-2 w-full py-2 ${wallet.coinHolding <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 transition'} text-white rounded-lg`}>
-                  Sell ({((wallet.coinHolding * sellPercent) / 100).toFixed(2)} coins)
-                </button>
-              </div>
-              <button onClick={() => setIsPaused(!isPaused)} className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                {isPaused ? 'Resume' : 'Pause'} Simulation
-              </button>
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-lg font-bold mb-2">Trade History</h3>
-            <div className="max-h-48 overflow-y-auto">
-              {tradingHistory.length === 0 ? (
-                <p className="text-gray-500 text-center">No trades yet</p>
-              ) : (
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2">Type</th>
-                      <th className="text-left py-2">Time</th>
-                      <th className="text-right py-2">Amount</th>
-                      <th className="text-right py-2">Price</th>
-                      <th className="text-right py-2">Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tradingHistory.slice().reverse().map((trade, i) => (
-                      <tr key={i} className="border-b">
-                        <td className={`py-1 ${trade.type === 'BUY' ? 'text-green-600' : 'text-red-600'}`}>{trade.type}</td>
-                        <td className="py-1">{trade.timestamp}</td>
-                        <td className="py-1 text-right">{trade.amount.toFixed(2)}</td>
-                        <td className="py-1 text-right">${formatPrice(trade.price)}</td>
-                        <td className="py-1 text-right">${trade.value.toFixed(2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+          <div class="social-links">
+            <a href="https://x.com/DegenSimulator_" target="_blank" class="social-button twitter">
+              <i class="fab fa-twitter"></i> Twitter
+            </a>
+            <a href="https://t.me/degensimulator" target="_blank" class="social-button telegram">
+              <i class="fab fa-telegram"></i> Telegram
+            </a>
+            <a href="https://pump.fun/profile/5BYpDBJPte7Ya4QuFa4tcv4gUJfqFZdpXLQkrQTnX6Z1" target="_blank" class="buy-button">
+              <i class=""></i> Buy Now
+            </a>
           </div>
         </div>
-      );
-    };
-
-    ReactDOM.render(<MemeTrader />, document.getElementById('root'));
+      </div>
+      <h1>SOL MemeTrader Simulator</h1>
+    </div>
+    <div class="chart-container" id="chart"></div>
+    <div class="controls">
+      <div class="control-panel" id="portfolio">
+        <h3>Portfolio</h3>
+        <div id="portfolio-details"></div>
+      </div>
+      <div class="control-panel" id="trading">
+        <h3>Trading</h3>
+        <div id="buy-controls"></div>
+        <div id="sell-controls"></div>
+        <button id="pause-button">Pause Simulation</button>
+      </div>
+    </div>
+    <div class="trade-history">
+      <h3>Trade History</h3>
+      <table id="trade-history-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Time</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="script.js"></script>
+  <script>
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Contract address copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
   </script>
 </body>
 </html>
