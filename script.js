@@ -156,7 +156,7 @@ function renderChart() {
     type: 'candlestick',
     increasing: increasing,
     decreasing: decreasing,
-    name: 'DOGE/SOL'
+    name: 'DSIMULATOR/SOL'
   }];
   
   // Add position markers to chart
@@ -223,7 +223,7 @@ function renderChart() {
   
   const layout = {
     title: {
-      text: 'DOGE/SOL Price',
+      text: 'DSIMULATOR/SOL Price',
       font: { color: '#fff' }
     },
     paper_bgcolor: '#121212',
@@ -265,7 +265,7 @@ function updatePortfolio() {
   
   document.getElementById('portfolio-details').innerHTML = `
     <div>Cash:</div><div>${wallet.cash.toFixed(4)} SOL</div>
-    <div>Coins:</div><div>${wallet.coinHolding.toFixed(2)} DOGE</div>
+    <div>Coins:</div><div>${wallet.coinHolding.toFixed(2)} DSIMULATOR</div>
     <div>Invested:</div><div>${wallet.invested.toFixed(4)} SOL</div>
     <div>Current Value:</div><div>${remainingValue.toFixed(4)} SOL</div>
     <div>Realized P&L:</div><div class="${realizedPnL >= 0 ? 'profit' : 'loss'}">${realizedPnL.toFixed(4)} SOL</div>
@@ -355,7 +355,7 @@ function updateTradeHistory() {
     <tr>
       <td class="${trade.type.toLowerCase()}">${trade.type}</td>
       <td>${trade.timestamp}</td>
-      <td>${trade.amount.toFixed(2)} DOGE</td>
+      <td>${trade.amount.toFixed(2)} DSIMULATOR</td>
       <td>${formatPrice(trade.price)} SOL</td>
       <td class="${profitClass}">${trade.value.toFixed(4)} SOL</td>
     </tr>
@@ -364,7 +364,7 @@ function updateTradeHistory() {
 
 function updateButtonLabels() {
   document.getElementById('buy-button').textContent = `Buy (${((wallet.cash * buyPercent) / 100).toFixed(4)} SOL)`;
-  document.getElementById('sell-button').textContent = `Sell (${((wallet.coinHolding * sellPercent) / 100).toFixed(2)} DOGE)`;
+  document.getElementById('sell-button').textContent = `Sell (${((wallet.coinHolding * sellPercent) / 100).toFixed(2)} DSIMULATOR)`;
 }
 
 function resetSimulation() {
@@ -404,7 +404,7 @@ document.getElementById('sell-controls').innerHTML = `
   <label>Sell (% of coins)</label>
   <input type="range" min="1" max="100" value="${sellPercent}" id="sell-slider">
   <span>${sellPercent}%</span>
-  <button id="sell-button">Sell (${((wallet.coinHolding * sellPercent) / 100).toFixed(2)} DOGE)</button>
+  <button id="sell-button">Sell (${((wallet.coinHolding * sellPercent) / 100).toFixed(2)} DSIMULATOR)</button>
 `;
 
 // Add candle period selector and reset button
@@ -430,7 +430,7 @@ document.getElementById('buy-slider').addEventListener('input', (e) => {
 document.getElementById('sell-slider').addEventListener('input', (e) => {
   sellPercent = parseInt(e.target.value);
   document.querySelector('#sell-controls span').textContent = `${sellPercent}%`;
-  document.getElementById('sell-button').textContent = `Sell (${((wallet.coinHolding * sellPercent) / 100).toFixed(2)} DOGE)`;
+  document.getElementById('sell-button').textContent = `Sell (${((wallet.coinHolding * sellPercent) / 100).toFixed(2)} DSIMULATOR)`;
 });
 
 document.getElementById('candle-period').addEventListener('change', (e) => {
